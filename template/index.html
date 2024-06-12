@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">Tweets</h1>
+            {% for tweet in tweets %}
+            <div class="alert alert-dark mb-4" role="alert">
+                {{ tweet.body }}<br/>
+                <small class="text-muted">
+                    ({{ tweet.created_at }}) By @{{ tweet.user.username }}
+                </small>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Compose Tweet</h5>
+                    {% if form %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary w-100">Tweet</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Welcome</h3>
+                    <p class="card-text">Please register or login to continue.</p>
+                    <a class="btn btn-primary btn-block mb-2" href="{% url 'register' %}">Register</a>
+                    <a class="btn btn-secondary btn-block" href="{% url 'login' %}">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

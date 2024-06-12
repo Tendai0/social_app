@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if profile %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="mb-4">{{ profile.user.username }}'s Profile</h1>
+                {% if tweets %}
+                    {% for tweet in tweets %}
+                        <div class="alert alert-dark mb-3">
+                            {{ tweet.body }}<br/>
+                            <small class="text-muted">
+                                {{ tweet.created_at }} by @{{ tweet.user.username }}
+                            </small>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Follows
+                    </div>
+                    <div class="card-body">
+                        {% for following in profile.follows.all %}
+                            <p class="card-text">
+                                <a href="{% url 'profile' following.user.id %}">@{{ following }}</a>
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Followed By
+                    </div>
+                    <div class="card-body">
+                        {% for follower in profile.followed_by.all %}
+                            <p class="card-text">
+                                <a href="{% url 'profile' follower.user.id %}">@{{ follower }}</a>
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <form method="POST" class="text-center">
+                    {% csrf_token %}
+                    {% if profile in user.profile.follows.all %}
+                        <button class="btn btn-outline-danger w-100" name="follow" value="unfollow" type="submit">
+                            Unfollow @{{ profile.user.username|lower }}
+                        </button>
+                    {% else %}
+                        <button class="btn btn-outline-success w-100" name="follow" value="follow" type="submit">
+                            Follow @{{ profile.user.username|lower }}
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
